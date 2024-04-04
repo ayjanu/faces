@@ -8,23 +8,41 @@ import cv2
 # specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
 
 # Open the input movie file
-input_movie = cv2.VideoCapture("hamilton_clip.mp4")
+input_movie = cv2.VideoCapture("test43.mp4")
+width = int(input_movie.get(cv2.CAP_PROP_FRAME_WIDTH ))
+height = int(input_movie.get(cv2.CAP_PROP_FRAME_HEIGHT ))
+fps =  input_movie.get(cv2.CAP_PROP_FPS)
 length = int(input_movie.get(cv2.CAP_PROP_FRAME_COUNT))
-
 # Create an output movie file (make sure resolution/frame rate matches input video!)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-output_movie = cv2.VideoWriter('output.avi', fourcc, 29.97, (640, 360))
+output_movie = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
 
 # Load some sample pictures and learn how to recognize them.
-lmm_image = face_recognition.load_image_file("lin-manuel-miranda.png")
+lmm_image = face_recognition.load_image_file("known_faces/Amal.png")
 lmm_face_encoding = face_recognition.face_encodings(lmm_image)[0]
 
-al_image = face_recognition.load_image_file("alex-lacamoire.png")
-al_face_encoding = face_recognition.face_encodings(al_image)[0]
+# lmm_image1 = face_recognition.load_image_file("known_faces/Amal1.jpg")
+# lmm_face_encoding1 = face_recognition.face_encodings(lmm_image1)[0]
+
+# lmm_image2 = face_recognition.load_image_file("known_faces/Amal2.jpg")
+# lmm_face_encoding2 = face_recognition.face_encodings(lmm_image2)[0]
+
+# lmm_image3 = face_recognition.load_image_file("known_faces/Amal3.jpg")
+# lmm_face_encoding3 = face_recognition.face_encodings(lmm_image3)[0]
+
+# lmm_image4 = face_recognition.load_image_file("known_faces/Amal4.jpg")
+# lmm_face_encoding4 = face_recognition.face_encodings(lmm_image4)[0]
+
+# lmm_image5 = face_recognition.load_image_file("known_faces/Amal5.jpg")
+# lmm_face_encoding5 = face_recognition.face_encodings(lmm_image5)[0]
 
 known_faces = [
     lmm_face_encoding,
-    al_face_encoding
+    # lmm_face_encoding1,
+    # lmm_face_encoding2,
+    # lmm_face_encoding3,
+    # # lmm_face_encoding4,
+    # lmm_face_encoding5,
 ]
 
 # Initialize some variables
@@ -44,6 +62,8 @@ while True:
 
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_frame = frame[:, :, ::-1]
+    code = cv2.COLOR_BGR2RGB
+    rgb_frame = cv2.cvtColor(rgb_frame, code)
 
     # Find all the faces and face encodings in the current frame of video
     face_locations = face_recognition.face_locations(rgb_frame)
@@ -58,9 +78,17 @@ while True:
         # but I kept it simple for the demo
         name = None
         if match[0]:
-            name = "Lin-Manuel Miranda"
+            name = "Lin-Manuel Amal"
         elif match[1]:
-            name = "Alex Lacamoire"
+            name = "Amal1"
+        # elif match[2]:
+        #     name = "Amal2"
+        # elif match[3]:
+        #     name = "Amal3"
+        # elif match[4]:
+        #     name = "Amal4"
+        # elif match[5]:
+        #     name = "Amal5"
 
         face_names.append(name)
 
