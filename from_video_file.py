@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+from math import sqrt
 
 # This is a demo of running face recognition on a video file and saving the results to a new video file.
 #
@@ -33,7 +34,25 @@ face_encodings = []
 face_names = []
 frame_number = 0
 
+
+def isCloseEnough(old_point, new_point):
+    x1,y1 = old_point
+    x2,y2 = new_point
+
+    dist = sqrt((x1-x2)**2 + (y1-y2)**2)
+    
+
+def getMidPoint(topLeft, bottomRight):
+    x1,y1 = topLeft
+    x2,y2 = bottomRight
+    return (x1+x2)/2, (y1+y2)/2
+
+previous_vector = []
+percent_threshold = 0.05
+
 while True:
+    curr_vector = []
+
     # Grab a single frame of video
     ret, frame = input_movie.read()
     frame_number += 1
@@ -44,6 +63,9 @@ while True:
 
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_frame = frame[:, :, ::-1]
+
+    code = cv2.COLOR_BGR2RGB
+    rgb_frame = cv2.cvtColor(rgb_frame, code)
 
     # Find all the faces and face encodings in the current frame of video
     face_locations = face_recognition.face_locations(rgb_frame)
@@ -65,9 +87,11 @@ while True:
         face_names.append(name)
 
     # Label the results
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
-        if not name:
-            continue
+    for i, ((top, right, bottom, left), name) in enumerate(zip(face_locations, face_names)):
+        print(top)
+        
+        midPoint = getMidPoint((left, top), (right, bottom))
+        curr_vector.append((midPoint, name))
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
@@ -75,12 +99,38 @@ while True:
         # Draw a label with a name below the face
         cv2.rectangle(frame, (left, bottom - 25), (right, bottom), (0, 0, 255), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
+        # box but no name
+        if not name:
+            print("box but no name", frame_number )
+            cv2.imwrite(f'pics_no_name/frame_{frame_number}.jpg', frame)
+            if previous_vector is not None:
+                    for old_point, old_name in previous_vector:
+                        if isCloseEnough(old_point, midPoint): 
+                            name = old_name
+            continue
+        # box and name
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+    # no box, no name
+    if len(face_locations) == 0:
+        print("no box and no name")
+        cv2.imwrite(f'pics_no_box_no_name/frame_{frame_number}.jpg', frame)
+
+    previous_vector = curr_vector
+
 
     # Write the resulting image to the output video file
     print("Writing frame {} / {}".format(frame_number, length))
     output_movie.write(frame)
 
+    previous_vector = face_locations
+
+
 # All done!
 input_movie.release()
 cv2.destroyAllWindows()
+
+
+
+
+
+
