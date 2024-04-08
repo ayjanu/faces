@@ -103,13 +103,23 @@ while True:
         if not name:
             print("box but no name", frame_number )
             cv2.imwrite(f'pics_no_name/frame_{frame_number}.jpg', frame)
-            if previous_vector is not None:
-                    for old_point, old_name in previous_vector:
+        if previous_vector:
+            for item in previous_vector:
+                if len(item) == 2:
+                    old_point, old_name = item
+                    for new_point, new_name in curr_vector:
                         if isCloseEnough(old_point, midPoint): 
                             name = old_name
+                            cv2.rectangle(frame, (left, bottom - 25), (right, bottom), (0, 0, 255), cv2.FILLED)
+                            font = cv2.FONT_HERSHEY_DUPLEX
+                            cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+
             continue
         # box and name
+        cv2.rectangle(frame, (left, bottom - 25), (right, bottom), (0, 0, 255), cv2.FILLED)
+        font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+
     # no box, no name
     if len(face_locations) == 0:
         print("no box and no name")
@@ -127,6 +137,7 @@ while True:
 
 # All done!
 input_movie.release()
+
 cv2.destroyAllWindows()
 
 
