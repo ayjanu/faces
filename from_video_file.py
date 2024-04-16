@@ -1,5 +1,5 @@
-import face_recognition
 import cv2
+from deepface import DeepFace
 
 # This is a demo of running face recognition on a video file and saving the results to a new video file.
 #
@@ -18,32 +18,6 @@ fourcc = cv2.VideoWriter_fourcc(*'XVID')
 output_movie = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
 
 # Load some sample pictures and learn how to recognize them.
-lmm_image = face_recognition.load_image_file("known_faces/Amal.png")
-lmm_face_encoding = face_recognition.face_encodings(lmm_image)[0]
-
-# lmm_image1 = face_recognition.load_image_file("known_faces/Amal1.jpg")
-# lmm_face_encoding1 = face_recognition.face_encodings(lmm_image1)[0]
-
-# lmm_image2 = face_recognition.load_image_file("known_faces/Amal2.jpg")
-# lmm_face_encoding2 = face_recognition.face_encodings(lmm_image2)[0]
-
-# lmm_image3 = face_recognition.load_image_file("known_faces/Amal3.jpg")
-# lmm_face_encoding3 = face_recognition.face_encodings(lmm_image3)[0]
-
-# lmm_image4 = face_recognition.load_image_file("known_faces/Amal4.jpg")
-# lmm_face_encoding4 = face_recognition.face_encodings(lmm_image4)[0]
-
-# lmm_image5 = face_recognition.load_image_file("known_faces/Amal5.jpg")
-# lmm_face_encoding5 = face_recognition.face_encodings(lmm_image5)[0]
-
-known_faces = [
-    lmm_face_encoding,
-    # lmm_face_encoding1,
-    # lmm_face_encoding2,
-    # lmm_face_encoding3,
-    # # lmm_face_encoding4,
-    # lmm_face_encoding5,
-]
 
 # Initialize some variables
 face_locations = []
