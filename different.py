@@ -76,7 +76,7 @@ while True:
                     break
             if id == 0:
                 # Save the frame as an image in the output folder
-                output_path = os.path.join(output_folder, f"frame_{frame_number}_{x}_{y}_{w}_{h}.png")
+                output_path = os.path.join(output_folder, f"frame_{frame_number}_{x}_{y}_{x+w}_{y+h}.png")
                 # print("Saving frame to:", output_path)
                 image = Image.fromarray(bgr_frame)
                 image.save(output_path)
@@ -87,7 +87,7 @@ while True:
         if isinstance(result, list) and len(result) > 0:
             emotion = max(result[0]['emotion'].items(), key=lambda x: x[1])[0]
             cv2.rectangle(frame, (x, y), (x+w, y+h), col, 2)
-            cv2.putText(frame, emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+            cv2.putText(frame, emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, col, 2)
 
     # Display the resulting frame
     print("Writing frame {} / {}".format(frame_number, length))
