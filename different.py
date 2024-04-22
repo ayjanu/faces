@@ -61,9 +61,12 @@ while True:
             disty = 10000
             id = 0
             items = os.listdir(output_folder)
+            print("items:", items)
             # Check if the length of the list is zero (i.e., directory is empty)
             if len(items) != 0:
                 fi = DeepFace.find(bgr_frame, output_folder,"VGG-Face","cosine",0,"opencv",1,0,0.6,"base",0)
+                print("Face matching results:", fi)
+                print("PEEPS results:", peeps)
                 for df in fi:
                     identities = df['identity'].to_list()
                     disties = df['distance'].to_list()
@@ -75,7 +78,8 @@ while True:
                             k = peeps.index(id)
             if id == 0:
                 # Save the frame as an image in the output folder
-                output_path = os.path.join(output_folder, f"frame_{frame_number}_{(x, y, w, h)}.png")
+                output_path = os.path.join(output_folder, f"frame_{frame_number}_{x}-{y}-{w}-{h}.png")
+                print("Saving frame to:", output_path)
                 image = Image.fromarray(bgr_frame)
                 image.save(output_path)
         result = DeepFace.analyze(face, actions=['emotion'], enforce_detection=False)
