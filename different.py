@@ -57,10 +57,8 @@ while True:
         disty = 10000
         id = 0
         k = 1000
-        while True:
-            if (id != 0): 
-                break
-            disty = 1
+        while id == 0:
+            disty = 10000
             id = 0
             items = os.listdir(output_folder)
             # Check if the length of the list is zero (i.e., directory is empty)
