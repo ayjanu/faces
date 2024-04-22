@@ -43,16 +43,16 @@ while True:
     # Detect faces in the frame
     faces = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml').detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
 
+    output_folder = "/tmp/temp_dir"
+
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+        os.chmod(output_folder, 0o777)
 
     # For each detected face, predict emotion
     for (x, y, w, h) in faces:
         face = frame[y:y+h, x:x+w]
         bgr_frame = cv2.cvtColor(face, cv2.COLOR_RGB2BGR)
-        
-        output_folder = "/known_faces"
-
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
 
         disty = 10000
         id = 0
@@ -62,19 +62,22 @@ while True:
                 break
             disty = 1
             id = 0
-            fi = DeepFace.find(bgr_frame, output_folder,"VGG-Face","cosine",1,"opencv",1,0,0.6,"base",0)
-            for df in fi:
-                identities = df['identity'].toList()
-                disties = df['distance'].toList()
-                for index, value in enumerate(disties):
-                    if value < disty:
-                        id = identities[index]
-                        if id not in peeps:
-                            peeps.append(id)
-                        k = peeps.index(id)
+            items = os.listdir(output_folder)
+            # Check if the length of the list is zero (i.e., directory is empty)
+            if len(items) != 0:
+                fi = DeepFace.find(bgr_frame, output_folder,"VGG-Face","cosine",0,"opencv",1,0,0.6,"base",0)
+                for df in fi:
+                    identities = df['identity'].to_list()
+                    disties = df['distance'].to_list()
+                    for index, value in enumerate(disties):
+                        if value < disty:
+                            id = identities[index]
+                            if id not in peeps:
+                                peeps.append(id)
+                            k = peeps.index(id)
             if id == 0:
                 # Save the frame as an image in the output folder
-                output_path = os.path.join(output_folder, f"frame_{frame_number}.png")
+                output_path = os.path.join(output_folder, f"frame_{frame_number}_{(x, y, w, h)}.png")
                 image = Image.fromarray(bgr_frame)
                 image.save(output_path)
         result = DeepFace.analyze(face, actions=['emotion'], enforce_detection=False)
